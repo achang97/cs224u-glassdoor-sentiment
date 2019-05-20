@@ -1,0 +1,24 @@
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Google-Reviews-E9079.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f google-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Apple-Reviews-E1138.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f apple-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Airbnb-Reviews-E391850.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f airbnb-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Square-Reviews-E422050.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f square-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Facebook-Reviews-E40772.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f facebook-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Tesla-Reviews-E43129.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f tesla-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Yelp-Reviews-E43314.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f yelp-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Oracle-Reviews-E1737.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f oracle-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Salesforce-Reviews-E11159.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f salesforce-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Visa-Inc-Reviews-E3035.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f visa-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Uber-Reviews-E575263.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f uber-reviews.csv &
+
+nohup python3 main.py --headless --url "https://www.glassdoor.com/Reviews/Amazon-Reviews-E6036.htm?sort.sortType=RD&sort.ascending=false" --limit 50000 -f amazon-reviews.csv &
+
