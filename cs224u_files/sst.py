@@ -69,9 +69,9 @@ def binary_class_func(y):
         the experiments.
 
     """
-    if y in ("0", "1"):
+    if y in ("1", "2"):
         return "negative"
-    elif y in ("3", "4"):
+    elif y in ("4", "5"):
         return "positive"
     else:
         return None
@@ -80,9 +80,9 @@ def binary_class_func(y):
 def ternary_class_func(y):
     """Define a binary SST task. Just like `binary_class_func` except
     input '2' returns 'neutral'."""
-    if y in ("0", "1"):
+    if y in ("1", "2"):
         return "negative"
-    elif y in ("3", "4"):
+    elif y in ("4", "5"):
         return "positive"
     else:
         return "neutral"
