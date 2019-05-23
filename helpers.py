@@ -25,6 +25,8 @@ def train_dev_test_split(glassdoor_home, output_var='rating_overall', train_spli
     data[['employee_title', 'review_title', 'pros', 'cons', 'advice_to_mgmt']] = \
         data[['employee_title', 'review_title', 'pros', 'cons', 'advice_to_mgmt']].fillna('')
     
+    data[[output_var]] = data[[output_var]].astype('int')
+    
     X = data[cols_to_use[:-1]]
     y = data[[output_var]]
     
@@ -73,9 +75,6 @@ def ternary_class_func(y):
         return "positive"
     else:
         return "neutral"
-    
-from sklearn.feature_extraction import DictVectorizer
-from sklearn.metrics import classification_report, f1_score
 
 def build_dataset(X, y, phi, class_func, vectorizer=None, vectorize=True):
     """Core general function for building experimental datasets.
@@ -87,7 +86,7 @@ def build_dataset(X, y, phi, class_func, vectorizer=None, vectorize=True):
         'raw_examples' (the `pd.DataFrame` objects, for error analysis).
 
     """
-    labels = [class_func(value) for value in y.values]
+    labels = [class_func(value) for value in y.values.flatten()]
     raw_examples = [ex for i, ex in X.iterrows()]
     feat_dicts = [phi(ex) for ex in raw_examples]
         
@@ -114,9 +113,9 @@ def experiment(
         X_assess,
         y_assess,
         train_func,
-        class_func=ternary_class_func,
         score_func=utils.safe_macro_f1,
         vectorize=True,
+        class_func=lambda x: x,
         verbose=True,
         random_state=None):
     """Generic experimental framework. Either assesses with a
@@ -186,9 +185,9 @@ def compare_models(
         train_func2=None,
         vectorize1=True,
         vectorize2=True,
+        class_func=lambda x: x,
         stats_test=scipy.stats.wilcoxon,
         trials=10,
-        class_func=ternary_class_func,
         score_func=utils.safe_macro_f1):
     """Wrapper for comparing models. The parameters are like those of
     `experiment`, with the same defaults, except
