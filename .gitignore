@@ -1,3 +1,4 @@
 glassdoor-data/
 glassdoor-review-scraper/secret.json
 cs224u_files/data
+*.pkl

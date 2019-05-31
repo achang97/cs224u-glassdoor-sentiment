@@ -16,14 +16,14 @@ def train_dev_test_split(glassdoor_home, output_var='rating_overall', train_spli
                          random_state=None, verbose=True):
     src_filename = os.path.join(glassdoor_home, 'glassdoor-data.csv')
     
-    cols_to_use = ['date', 'company', 'employee_title', 'review_title', 'pros', 'cons', 'advice_to_mgmt']
+    cols_to_use = ['review_title', 'pros', 'cons', 'advice_to_mgmt']
     cols_to_use.append(output_var)
     
     # Read and drop NA rows
     data = pd.read_csv(src_filename, usecols=cols_to_use)[cols_to_use]
     data = data.dropna(subset=[output_var])
-    data[['employee_title', 'review_title', 'pros', 'cons', 'advice_to_mgmt']] = \
-        data[['employee_title', 'review_title', 'pros', 'cons', 'advice_to_mgmt']].fillna('')
+    data[['review_title', 'pros', 'cons', 'advice_to_mgmt']] = \
+        data[['review_title', 'pros', 'cons', 'advice_to_mgmt']].fillna('')
     
     data[[output_var]] = data[[output_var]].astype('int')
     
@@ -76,7 +76,7 @@ def ternary_class_func(y):
     else:
         return "neutral"
 
-def build_dataset(X, y, phi, class_func, vectorizer=None, vectorize=True):
+def build_dataset(X, y, feature_name, phi, class_func, vectorize=True, vectorizer=None, use_sparse_vectorizer=False):
     """Core general function for building experimental datasets.
     Returns
     -------
@@ -88,13 +88,13 @@ def build_dataset(X, y, phi, class_func, vectorizer=None, vectorize=True):
     """
     labels = [class_func(value) for value in y.values.flatten()]
     raw_examples = [ex for i, ex in X.iterrows()]
-    feat_dicts = [phi(ex) for ex in raw_examples]
+    feat_dicts = [phi(ex, feature_name) for ex in raw_examples]
         
     feat_matrix = None
     if vectorize:
         # In training, we want a new vectorizer:
         if vectorizer == None:
-            vectorizer = DictVectorizer(sparse=False)
+            vectorizer = DictVectorizer(sparse=use_sparse_vectorizer)
             feat_matrix = vectorizer.fit_transform(feat_dicts)
         # In assessment, we featurize using the existing vectorizer:
         else:
@@ -107,6 +107,7 @@ def build_dataset(X, y, phi, class_func, vectorizer=None, vectorize=True):
             'raw_examples': raw_examples}
 
 def experiment(
+        feature_name,
         phi,
         X_train,
         y_train,
@@ -115,6 +116,7 @@ def experiment(
         train_func,
         score_func=utils.safe_macro_f1,
         vectorize=True,
+        use_sparse_vectorizer=False,
         class_func=lambda x: x,
         verbose=True,
         random_state=None):
@@ -138,10 +140,11 @@ def experiment(
     train = build_dataset(
         X_train,
         y_train,
+        feature_name,
         phi,
         class_func,
-        vectorizer=None,
-        vectorize=vectorize)
+        vectorize=vectorize,
+        use_sparse_vectorizer=use_sparse_vectorizer)
     # Manage the assessment set-up:
     X_train = train['X']
     y_train = train['y']
@@ -151,6 +154,7 @@ def experiment(
     assess = build_dataset(
         X_assess,
         y_assess,
+        feature_name,
         phi,
         class_func,
         vectorizer=train['vectorizer'],
@@ -179,12 +183,14 @@ def compare_models(
         y_train,
         X_assess,
         y_assess,
+        feature_name,
         phi1,
         train_func1,
         phi2=None,
         train_func2=None,
         vectorize1=True,
         vectorize2=True,
+        use_sparse_vectorizer=False,
         class_func=lambda x: x,
         stats_test=scipy.stats.wilcoxon,
         trials=10,
@@ -205,6 +211,7 @@ def compare_models(
         train_func2 = train_func1
         
     experiments1 = [experiment(
+        feature_name,
         phi1,
         X_train,
         y_train,
@@ -214,8 +221,10 @@ def compare_models(
         class_func=class_func,
         score_func=score_func,
         vectorize=vectorize1,
+        use_sparse_vectorizer=use_sparse_vectorizer,
         verbose=False) for _ in range(trials)]
     experiments2 = [experiment(
+        feature_name,
         phi2,
         X_train,
         y_train,
@@ -225,6 +234,7 @@ def compare_models(
         class_func=class_func,
         score_func=score_func,
         vectorize=vectorize2,
+        use_sparse_vectorizer=use_sparse_vectorizer,
         verbose=False)  for _ in range(trials)]
     scores1 = np.array([d['score'] for d in experiments1])
     scores2 = np.array([d['score'] for d in experiments2])
