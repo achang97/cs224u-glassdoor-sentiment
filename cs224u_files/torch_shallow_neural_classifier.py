@@ -36,8 +36,10 @@ class TorchShallowNeuralClassifier(TorchModelBase):
         The default is to use 'cuda' iff available
 
     """
-    def __init__(self, **kwargs):
+    def __init__(self, class_weights=None, **kwargs):
         super(TorchShallowNeuralClassifier, self).__init__(**kwargs)
+        if class_weights is not None:
+            self.class_weights = torch.tensor(class_weights).to(self.device)
 
     def define_graph(self):
         return nn.Sequential(
@@ -84,8 +86,13 @@ class TorchShallowNeuralClassifier(TorchModelBase):
         self.model = self.define_graph()
         self.model.to(self.device)
         self.model.train()
+        
         # Optimization:
-        loss = nn.CrossEntropyLoss()
+        if self.class_weights is not None:
+            loss = nn.CrossEntropyLoss(self.class_weights)
+        else:
+            loss = nn.CrossEntropyLoss()
+            
         optimizer = self.optimizer(
             self.model.parameters(),
             lr=self.eta,
